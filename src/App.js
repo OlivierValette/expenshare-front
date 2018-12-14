@@ -1,28 +1,28 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import FormShareGroup from "./Components/FormShareGroup";
 
 class App extends Component {
-  render() {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            groupId: []
+        };
+    }
+
+    handleSearch (groupId) {
+        this.setState({ groupId: groupId });
+    }
+
+    render() {
+
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+        <div className="jumbotron">
+          <FormShareGroup search={groupId => this.handleSearch(groupId)}/>/>
+        </div>
     );
-  }
+    }
 }
 
 export default App;
