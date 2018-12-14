@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'animate.css';
 import './App.css';
 import FormShareGroup from "./Components/FormShareGroup";
 
@@ -18,8 +20,11 @@ class App extends Component {
     render() {
 
     return (
-        <div className="jumbotron">
-          <FormShareGroup search={groupId => this.handleSearch(groupId)}/>/>
+        <div className="container">
+            <div className="jumbotron">
+                <h1 className="display-4">Saisissez l'identifiant du groupe</h1>
+                <FormShareGroup search={groupId => this.handleSearch(groupId)}/>
+            </div>
         </div>
     );
     }
