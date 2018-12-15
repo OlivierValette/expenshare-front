@@ -2,12 +2,6 @@ import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'animate.css';
 import './App.css';
-import './components/Identification';
-import './components/Menu';
-import './components/Dashboard';
-import './components/Expense';
-import './components/Person';
-
 import { Route } from 'react-router-dom';
 import Dashboard from "./components/Dashboard";
 import Expense from "./components/Expense";
