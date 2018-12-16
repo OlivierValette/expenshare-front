@@ -8,7 +8,14 @@ class Identification extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            groupId: []
+                user: {
+                    id: 0,
+                },
+                newUser: {
+                    id: 0,
+                    firstname: '',
+                    lastname: '',
+                },
         };
     }
 

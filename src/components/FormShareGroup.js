@@ -50,14 +50,24 @@ class FormShareGroup extends Component {
         event.preventDefault();
         // Get list of existing slug
         const sharegroups = this.state.sharegroups.map(category => category.slug);
-        console.log(sharegroups);
+        // console.log(sharegroups);
         // Slugify given name
         const slug = this.slugify(this.state.value);
-        // Test if already used
-        if (sharegroups.includes(slug)) {
-            alert( 'Already exists: ' + slug + '(' + origin + ')' );
+        // See if already used
+        const used = sharegroups.includes(slug);
+
+        if (origin === 'create') {
+            if (used) {
+                alert('Le groupe ' + slug + ' existe déjà, modifiez votre saisie');
+            } else {
+                alert('Aller à /person_new/' + slug);
+            }
         } else {
-            alert( 'Not found: ' + slug + '(' + origin + ')' );
+            if (!used) {
+                alert( "Le groupe " + slug + " n'existe pas, modifiez votre saisie");
+            } else {
+                alert('Aller à /person/' + slug);
+            }
         }
     }
 
