@@ -61,12 +61,14 @@ class FormShareGroup extends Component {
                 alert('Le groupe ' + slug + ' existe déjà, modifiez votre saisie');
             } else {
                 alert('Aller à /person_new/' + slug);
+                return this.props.handleGroupId(slug);
             }
         } else {
             if (!used) {
                 alert( "Le groupe " + slug + " n'existe pas, modifiez votre saisie");
             } else {
                 alert('Aller à /person/' + slug);
+                return this.props.handleGroupId(slug);
             }
         }
     }

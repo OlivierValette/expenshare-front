@@ -19,7 +19,7 @@ class Identification extends Component {
         };
     }
 
-    handleSearch (groupId) {
+    handleGroupId (groupId) {
         this.setState({ groupId: groupId });
     }
 
@@ -40,7 +40,7 @@ class Identification extends Component {
             </div>
             <div className="jumbotron">
                 <h1 className="display-4">Saisissez l'identifiant du groupe</h1>
-                <FormShareGroup search={groupId => this.handleSearch(groupId)}/>
+                <FormShareGroup handleGroupId={groupId => this.handleGroupId(groupId)}/>
             </div>
         </div>
     );

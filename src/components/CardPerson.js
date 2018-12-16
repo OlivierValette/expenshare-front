@@ -3,17 +3,19 @@ import React, {Component} from 'react';
 class CardPerson extends Component {
 
     render() {
-        const { person } = this.props;
-        const item = person.map(per => <p key={per.id}> <strong>{per.firstname} {per.lastname}</strong> </p>);
+
+        // TODO: nombre de règlemens et montant global à calculer
+        // TODO : activer button
+        console.log(this.props);
 
         return (
-            <div className="row">
-                <div className="col-9">
+            <div className="row mt-1">
+                <div className="col-10">
                     <div className="alert alert-secondary" role="alert">
-                        {item}
+                        <p> <strong>{this.props.person.firstname} {this.props.person.lastname}</strong> (xx paiements d'un montant total de xxx €)</p>
                     </div>
                 </div>
-                <div className="col-3">
+                <div className="col-2 text-center">
                     <button type = "button" className = "btn btn-outline-danger">Supprimer</button>
                 </div>
             </div>
