@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'animate.css';
 import './App.css';
 import { Route } from 'react-router-dom';
-import Dashboard from "./components/Dashboard";
+import Balance from "./components/Balance";
 import Expense from "./components/Expense";
 import Person from "./components/Person";
 import Menu from "./components/Menu";
@@ -16,9 +16,9 @@ class App extends Component {
             <div className="container">
                 <Route exact path="/" component={Identification} />
                 <Route path="/:id" component={Menu}/>
-                <Route path="/dashboard" component={Dashboard} />
-                <Route path="/expense" component={Expense} />
                 <Route path="/person" component={Person} />
+                <Route path="/expense" component={Expense} />
+                <Route path="/balance" component={Balance} />
             </div>
         );
     }

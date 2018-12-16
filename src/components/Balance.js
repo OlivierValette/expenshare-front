@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 
-class Dashboard extends Component {
+class Balance extends Component {
     render() {
         return (
             <div>
-                Tableau de bord du groupe
+                Équilibre des dépenses du groupe
             </div>
         );
     }
 }
 
-export default Dashboard;
+export default Balance;

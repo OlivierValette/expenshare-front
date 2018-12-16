@@ -4,7 +4,7 @@ class Person extends Component {
     render() {
         return (
             <div>
-                Détail des dépenses d'une personne du groupe
+                Détail des participants du groupe
             </div>
         );
     }

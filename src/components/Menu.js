@@ -4,10 +4,10 @@ import {NavLink} from "react-router-dom";
 class Menu extends Component {
     render() {
         return (
-            <nav className="navbar navbar-expand-md navbar-dark bg-dark">
+            <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div className="navbar-brand">
-                    <NavLink exact to="/" className="nav-link">
-                        <img src="./../ES-small.png" width="30" height="30" className="d-inline-block align-top" alt="logo" />
+                    <NavLink exact to="/" className="nav-link text-white">
+                        <img src="./../ES-small.png" width="30" height="30" className="d-inline-block align-top m-1" alt="logo" />
                         Expenshare
                     </NavLink>
                 </div>
@@ -17,17 +17,20 @@ class Menu extends Component {
                     <span className="navbar-toggler-icon"></span>
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNav">
-                    <ul className="navbar-nav">
+                    <ul className="navbar-nav mr-auto">
                         <li className="nav-item">
-                            <NavLink to="/dashboard" className="nav-link">Dashboard</NavLink>
+                            <NavLink to="/person" className="nav-link">Participants</NavLink>
                         </li>
                         <li className="nav-item">
                             <NavLink to="/expense" className="nav-link">Dépenses</NavLink>
                         </li>
                         <li className="nav-item">
-                            <NavLink to="/person" className="nav-link">Personnes</NavLink>
+                            <NavLink to="/balance" className="nav-link">Équilibres</NavLink>
                         </li>
                     </ul>
+                    <span className="navbar-text">
+                        <i>Les comptes faciles font les bons amis...</i>
+                    </span>
                 </div>
             </nav>
         );
