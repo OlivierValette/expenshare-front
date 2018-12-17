@@ -11,14 +11,22 @@ import Identification from "./components/Identification";
 
 class App extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            gSlug: 'weekend-a-saint-malo-entre-amis',
+        }
+    }
+
     render() {
+
         return (
             <div className="container">
                 <Route exact path="/" component={Identification} />
-                <Route path="/:id" component={Menu}/>
-                <Route path="/person" component={Person} />
-                <Route path="/expense" component={Expense} />
-                <Route path="/balance" component={Balance} />
+                <Route path="/" component={Menu}/>
+                <Route path={"/person/" + this.state.gSlug} component={Person} />
+                <Route path={"/expense/" + this.state.gSlug} component={Expense} />
+                <Route path={"/balance/" + this.state.gSlug} component={Balance} />
             </div>
         );
     }

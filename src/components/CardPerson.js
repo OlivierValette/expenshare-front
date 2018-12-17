@@ -45,7 +45,7 @@ class CardPerson extends Component {
                 <div className="col-10">
                     <div className="alert alert-secondary" role="alert">
                         <p> <strong>{this.props.person.firstname} {this.props.person.lastname} &nbsp;</strong>
-                            ({this.state.expenses.length} paiements d'un montant total de {this.state.totalAmount} €)
+                            ({this.state.expenses.length} paiement{this.state.expenses.length>1 ? 's' : ''} d'un montant total de {this.state.totalAmount} €)
                         </p>
                     </div>
                 </div>

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import CardPerson from "./CardPerson";
+import FormPerson from "./FormPerson";
 
 class Person extends Component {
 
@@ -7,6 +8,7 @@ class Person extends Component {
         super(props);
         this.state = {
             persons: [],
+            newPerson: {},
         }
     }
 
@@ -24,6 +26,11 @@ class Person extends Component {
             .then(data => this.setState({persons: data}));
     }
 
+    handleNewPerson (newPerson) {
+        this.setState({ newPerson: newPerson });
+        console.log(this.state.newPerson);
+    }
+
     render() {
         // First render, before componentDidMount()
         if (this.state.persons.length === 0) {
@@ -34,6 +41,9 @@ class Person extends Component {
 
         return (
             <div>
+
+                <FormPerson handleNewPerson={newPerson => this.handleNewPerson(newPerson)} />
+
                 {items}
             </div>
         );
