@@ -29,7 +29,7 @@ class Menu extends Component {
                         </li>
                     </ul>
                     <span className="navbar-text">
-                        <i>Les comptes faciles font les bons amis...</i>
+                        {/*<i>{this.props.sharegroup.slug}</i>*/}
                     </span>
                 </div>
             </nav>

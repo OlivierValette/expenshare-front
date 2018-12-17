@@ -13,7 +13,8 @@ class Person extends Component {
     componentDidMount() {
         // get list of persons in state through API (https://127.0.0.1/php/expenshare/public/person/{slug})
         // TODO : get the right parameter instead of the slug value used here
-        fetch ('http://127.0.0.1/php/expenshare/public/person/voyage-a-venise-2018', {
+        console.log(this.props);
+        fetch ('http://127.0.0.1/php/expenshare/public/person/weekend-a-saint-malo-entre-amis', {
             method: 'GET',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'

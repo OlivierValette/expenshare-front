@@ -12,23 +12,22 @@ class CardPerson extends Component {
 
     componentDidMount() {
         // get list of expenses in state through API (https://127.0.0.1/php/expenshare/public/person/show/{id})
-        // TODO : get the right parameter instead of the slug value used here
-        fetch ('http://127.0.0.1/php/expenshare/public/person/show/5', {
+        fetch ('http://127.0.0.1/php/expenshare/public/person/show/'+this.props.person.id, {
             method: 'GET',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
             .then(response => response.json())
-            .then(data => this.setState({expenses: data}));
-
-        // Nombre de règlements et montant global
-        let totalAmount = 0;
-        for (let i = 0; i < this.state.expenses.length; i++) {
-            totalAmount += this.state.expenses.amount[i];
-        }
-        this.setState({totalAmount: totalAmount});
-        console.log(this.state.expenses, this.state.totalAmount);
+            .then(data => this.setState({expenses: data}))
+            .then(() => {
+                // get number and total amount of expenses for this user
+                let totalAmount = 0;
+                for (let i = 0; i < this.state.expenses.length; i++) {
+                    totalAmount += parseFloat(this.state.expenses[i].amount);
+                }
+                this.setState({totalAmount});
+            });
     }
 
     render() {
@@ -39,7 +38,6 @@ class CardPerson extends Component {
         }
 
         // TODO : activer button
-
 
         return (
 
