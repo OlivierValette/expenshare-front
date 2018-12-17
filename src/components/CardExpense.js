@@ -29,32 +29,35 @@ class CardExpense extends Component {
             return <div>...</div>
         }
 
-        const item = this.state.expenses.map( expense => { return (
-                        <p key={expense.category.id}> <strong>{expense.category.label} ({expense.amount} €) &nbsp;</strong>
-                            payé par {expense.person.firstname}nbsp;
-                            le {expense.createdAt.date}nbsp;
-                            <i className={"fas " + expense.category.icon}></i>
-                        </p>
+        // TODO : activer boutons
+
+        const item = this.state.expenses.map( expense => {
+            return (
+                    <div className="row mt-1">
+                        <div className="col-9">
+                            <div className="alert alert-secondary" role="alert">
+                                <p key={expense.category.id}> <strong>{expense.category.label} ({expense.amount} €) &nbsp;</strong>
+                                    payé par {expense.person.firstname} &nbsp;
+                                    le {expense.createdAt.date} &nbsp;
+                                    <i className={"fas " + expense.category.icon}></i>
+                                </p>
+                            </div>
+                        </div>
+                        <div className="col-1 text-center">
+                            <button type = "button" className = "btn btn-outline-warning">Modifier</button>
+                        </div>
+                        <div className="col-2 text-center">
+                            <button type = "button" className = "btn btn-outline-danger">Supprimer</button>
+                        </div>
+                    </div>
                     )
                 }
             );
 
-        // TODO : activer boutons
 
         return (
-
-            <div className="row mt-1">
-                <div className="col-9">
-                    <div className="alert alert-secondary" role="alert">
-                        {item}
-                    </div>
-                </div>
-                <div className="col-1 text-center">
-                    <button type = "button" className = "btn btn-outline-warning">Modifier</button>
-                </div>
-                <div className="col-2 text-center">
-                    <button type = "button" className = "btn btn-outline-danger">Supprimer</button>
-                </div>
+            <div>
+                {item}
             </div>
         );
     }
