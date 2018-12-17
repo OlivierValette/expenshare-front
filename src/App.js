@@ -3,11 +3,11 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'animate.css';
 import './App.css';
 import { Route } from 'react-router-dom';
-import Balance from "./components/Balance";
-import Expense from "./components/Expense";
-import Person from "./components/Person";
 import Menu from "./components/Menu";
 import Identification from "./components/Identification";
+import Person from "./components/Person";
+import Expense from "./components/Expense";
+import Balance from "./components/Balance";
 
 class App extends Component {
 
@@ -20,13 +20,15 @@ class App extends Component {
 
     render() {
 
+        const rootpath = "/" + this.state.gSlug;
+
         return (
             <div className="container">
                 <Route exact path="/" component={Identification} />
-                <Route path="/" component={Menu}/>
-                <Route path={"/person/" + this.state.gSlug} component={Person} />
-                <Route path={"/expense/" + this.state.gSlug} component={Expense} />
-                <Route path={"/balance/" + this.state.gSlug} component={Balance} />
+                <Route path={rootpath} component={Menu}/>
+                <Route path={rootpath + "/person"} component={Person} />
+                <Route path={rootpath + "/expense"} component={Expense} />
+                <Route path={rootpath + "/balance"} component={Balance} />
             </div>
         );
     }

@@ -2,6 +2,14 @@ import React, { Component } from 'react';
 import {NavLink} from "react-router-dom";
 
 class Menu extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            gSlug: 'weekend-a-saint-malo-entre-amis',
+        }
+    }
+
     render() {
         console.log('Menu props: ', this.props);
         return (
@@ -20,17 +28,17 @@ class Menu extends Component {
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav mr-auto">
                         <li className="nav-item">
-                            <NavLink to="/person/" className="nav-link">Participants</NavLink>
+                            <NavLink to={this.state.gSlug + "/person"} className="nav-link">Participants</NavLink>
                         </li>
                         <li className="nav-item">
-                            <NavLink to="/expense/" className="nav-link">Dépenses</NavLink>
+                            <NavLink to={this.state.gSlug + "/expense"} className="nav-link">Dépenses</NavLink>
                         </li>
                         <li className="nav-item">
-                            <NavLink to="/balance/" className="nav-link">Équilibres</NavLink>
+                            <NavLink to={this.state.gSlug + "/balance"} className="nav-link">Équilibres</NavLink>
                         </li>
                     </ul>
                     <span className="navbar-text">
-                        {/*<i>{this.props.sharegroup.slug}</i>*/}
+                        <i>{this.state.gSlug}</i>
                     </span>
                 </div>
             </nav>
