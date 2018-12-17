@@ -8,19 +8,13 @@ class Identification extends Component {
     constructor(props) {
         super(props);
         this.state = {
-                user: {
-                    id: 0,
-                },
-                newUser: {
-                    id: 0,
-                    firstname: '',
-                    lastname: '',
-                },
+            groupId: 0,
         };
     }
 
     handleGroupId (groupId) {
         this.setState({ groupId: groupId });
+        console.log(this.state.groupId);
     }
 
     render() {

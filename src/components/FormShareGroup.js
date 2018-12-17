@@ -48,9 +48,8 @@ class FormShareGroup extends Component {
 
     handleSubmit(event, origin) {
         event.preventDefault();
-        // Get list of existing slug
+        // Get list of existing slugs
         const sharegroups = this.state.sharegroups.map(category => category.slug);
-        // console.log(sharegroups);
         // Slugify given name
         const slug = this.slugify(this.state.value);
         // See if already used
