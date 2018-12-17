@@ -16,6 +16,7 @@ class Person extends Component {
         // get list of persons in state through API (https://127.0.0.1/php/expenshare/public/person/{slug})
         // TODO : get the right parameter instead of the slug value used here
         console.log(this.props);
+
         fetch ('http://127.0.0.1/php/expenshare/public/person/weekend-a-saint-malo-entre-amis', {
             method: 'GET',
             headers: {
