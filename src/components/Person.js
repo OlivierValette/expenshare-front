@@ -8,7 +8,10 @@ class Person extends Component {
         this.state = {
             slug: '',
             persons: [],
-            newPerson: {},
+            newPerson: {
+                firstname: '',
+                lastname: '',
+            },
         }
     }
 
@@ -17,7 +20,7 @@ class Person extends Component {
         let slug = this.props.match.url.split('/')[1];
         this.setState({slug: slug});
 
-        // get list of persons in state through API (https://127.0.0.1/php/expenshare/public/person/{slug})
+        // get list of persons through API (https://127.0.0.1/php/expenshare/public/person/{slug})
         fetch ('http://127.0.0.1/php/expenshare/public/person/'+slug, {
             method: 'GET',
             headers: {
@@ -28,23 +31,34 @@ class Person extends Component {
             .then(data => this.setState({persons: data}));
     }
 
-    handleNewPerson (newPerson) {
-        this.setState({ newPerson: newPerson });
-        console.log(this.state.newPerson);
-    }
 
     handleChange(event) {
         event.preventDefault();
         this.setState({
-            firstname: event.target.firstname,
-            lastname: event.target.lastname,
+            newPerson.firstname: event.target.firstname,
+            newPerson.lastname: event.target.lastname,
         });
     }
 
     handleSubmit(event) {
         event.preventDefault();
-        const newPerson = this.state;
-        return this.props.handleNewPerson(newPerson);
+
+        // person creation in database
+        fetch('http://127.0.0.1/php/expenshare/public/person/', {
+            method: 'POST',
+            body: JSON.stringify({
+                firstname: this.state.newPerson.firstname,
+                lastname: this.state.newPerson.lastname,
+                slug: this.state.slug,
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                alert('Nouvelle personne créée avec succès !');
+            })
+            .catch(err => alert('Erreur lors de la création de la personne'))
+        ;
     }
 
     render() {

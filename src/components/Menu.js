@@ -10,7 +10,7 @@ class Menu extends Component {
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                     <div className="navbar-brand">
                         <NavLink exact to="/" className="nav-link text-white">
-                            <img src="./../ES-small.png" width="30" height="30" className="d-inline-block align-top m-1" alt="logo" />
+                            <img src="./../ES-small.png" width="30" height="30" className="d-inline-block m-1" alt="logo" />
                             Expenshare
                         </NavLink>
                     </div>

@@ -10,6 +10,7 @@ class Identification extends Component {
         this.state = {
             value: '',
             sharegroups: [],
+            sharegroup: null
         }
     }
 
@@ -69,6 +70,9 @@ class Identification extends Component {
                     .then(response => response.json())
                     .then(data => {
                         console.log(data);
+                        const groups = this.state.sharegroups;
+                        groups.push(JSON.parse(data));
+                        this.setState({ sharegroups: groups });
                         alert('Nouveau groupe créé avec succès !');
                     })
                     .catch(err => alert('Erreur lors de la création du groupe'))
