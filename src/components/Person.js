@@ -6,7 +6,6 @@ class Person extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            slug: '',
             persons: [],
             newPerson: {
                 firstname: '',
@@ -16,12 +15,9 @@ class Person extends Component {
     }
 
     componentDidMount() {
-        // get sharegroup slug from url
-        let slug = this.props.match.url.split('/')[1];
-        this.setState({slug: slug});
 
         // get list of persons through API (https://127.0.0.1/php/expenshare/public/person/{slug})
-        fetch ('http://127.0.0.1/php/expenshare/public/person/'+slug, {
+        fetch ('http://127.0.0.1/php/expenshare/public/person/'+this.props.slug, {
             method: 'GET',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -31,25 +27,30 @@ class Person extends Component {
             .then(data => this.setState({persons: data}));
     }
 
-
     handleChange(event) {
         event.preventDefault();
         this.setState({
-            newPerson.firstname: event.target.firstname,
-            newPerson.lastname: event.target.lastname,
+            newPerson: {
+                firtname: event.target.value,
+                lastname: event.target.value},
         });
     }
 
     handleSubmit(event) {
         event.preventDefault();
 
+        console.log(JSON.stringify({
+            firstname: this.state.newPerson.firstname,
+            lastname: this.state.newPerson.lastname,
+            slug: this.props.slug,
+        }));
         // person creation in database
-        fetch('http://127.0.0.1/php/expenshare/public/person/', {
+        fetch('http://127.0.0.1/php/expenshare/public/person', {
             method: 'POST',
             body: JSON.stringify({
                 firstname: this.state.newPerson.firstname,
                 lastname: this.state.newPerson.lastname,
-                slug: this.state.slug,
+                slug: this.props.slug,
             })
         })
             .then(response => response.json())
