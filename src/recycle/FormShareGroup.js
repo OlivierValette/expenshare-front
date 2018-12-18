@@ -5,8 +5,7 @@ class FormShareGroup extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: '',
-            name: '',
+            slug: '',
             sharegroups: [],
         }
     }
@@ -31,9 +30,9 @@ class FormShareGroup extends Component {
 
         return string.toString().toLowerCase()
             .replace(/\s+/g, '-')           // Replace spaces with -
-            .replace(p, c => b.charAt(a.indexOf(c)))        // Replace special characters
+            .replace(p, c => b.charAt(a.indexOf(c)))      // Replace special characters
             .replace(/&/g, '-and-')         // Replace & with 'and'
-            .replace(/[^\w\-]+/g, '')        // Remove all non-word characters
+            .replace(/[^\w\-]+/g, '')       // Remove all non-word characters
             .replace(/\-\-+/g, '-')         // Replace multiple - with single -
             .replace(/^-+/, '')             // Trim - from start of text
             .replace(/-+$/, '')             // Trim - from end of text
@@ -42,7 +41,7 @@ class FormShareGroup extends Component {
     handleChange(event) {
         event.preventDefault();
         this.setState({
-            value: event.target.value,
+            slug: event.target.value,
         });
     }
 
@@ -59,7 +58,19 @@ class FormShareGroup extends Component {
             if (used) {
                 alert('Le groupe ' + slug + ' existe déjà, modifiez votre saisie');
             } else {
-                alert('Aller à /person_new/' + slug);
+                // sharegroup creation in database
+                fetch('http://127.0.0.1/dcdev/js/expenshare/public/sharegroup/', {
+                    method: 'POST',
+                    body: JSON.stringify({ slug: this.state.slug })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        alert('Nouveau groupe créé avec succès !');
+                    })
+                    .catch(err => alert('Erreur lors de la création du groupe'))
+                ;
+
                 return this.props.handleGroupId(slug);
             }
         } else {
@@ -85,16 +96,16 @@ class FormShareGroup extends Component {
         }
 
         return (
-            <form className="form-group text-center" onSubmit={e => this.handleSubmit(e, 'create')}>
+            <div className="form-group text-center">
                 <input type="text" className="form-control form-control-lg" id="groupid"
-                       placeholder="Entrer votre identifiant"
+                       placeholder="Entrez votre identifiant"
                        value={this.state.value}
                        onChange={e => this.handleChange(e)} />
                 <input type="submit" className="btn btn-primary btn-lg m-2"  value="Créer"
                        onClick={e => this.handleSubmit(e, 'create')} />
                 <input type="submit" className="btn btn-dark btn-lg m-2" value="Ouvrir"
                        onClick={e => this.handleSubmit(e, 'open')} />
-            </form>
+            </div>
         )
     }
 }

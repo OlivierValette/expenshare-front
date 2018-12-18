@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import moment from "moment";
 
 class CardExpense extends Component {
 
@@ -19,7 +20,11 @@ class CardExpense extends Component {
         })
             .then(response => response.json())
             .then(data => this.setState({expenses: data}))
+            .then(console.log(this.state.expenses))
         ;
+
+        moment.locale('fr');
+        console.log(moment.locale());
     }
 
     render() {
@@ -36,10 +41,11 @@ class CardExpense extends Component {
                     <div className="row mt-1">
                         <div className="col-9">
                             <div className="alert alert-secondary" role="alert">
-                                <p key={expense.category.id}> <strong>{expense.category.label} ({expense.amount} €) &nbsp;</strong>
+                                <p key={expense.id}>
+                                    <i className={"fas " + expense.category.icon + " fa-2x fa-fw"}></i> &nbsp;
+                                    <strong>{expense.category.label} ({expense.amount} €) &nbsp;</strong>
                                     payé par {expense.person.firstname} &nbsp;
-                                    le {expense.createdAt.date} &nbsp;
-                                    <i className={"fas " + expense.category.icon}></i>
+                                    {moment(expense.createdAt.date).startOf('day').fromNow()}
                                 </p>
                             </div>
                         </div>

@@ -1,23 +1,24 @@
 import React, {Component} from 'react';
 import CardPerson from "./CardPerson";
-import FormPerson from "./FormPerson";
 
 class Person extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            slug: '',
             persons: [],
             newPerson: {},
         }
     }
 
     componentDidMount() {
-        // get list of persons in state through API (https://127.0.0.1/php/expenshare/public/person/{slug})
-        // TODO : get the right parameter instead of the slug value used here
-        console.log(this.props);
+        // get sharegroup slug from url
+        let slug = this.props.match.url.split('/')[1];
+        this.setState({slug: slug});
 
-        fetch ('http://127.0.0.1/php/expenshare/public/person/weekend-a-saint-malo-entre-amis', {
+        // get list of persons in state through API (https://127.0.0.1/php/expenshare/public/person/{slug})
+        fetch ('http://127.0.0.1/php/expenshare/public/person/'+slug, {
             method: 'GET',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -32,6 +33,20 @@ class Person extends Component {
         console.log(this.state.newPerson);
     }
 
+    handleChange(event) {
+        event.preventDefault();
+        this.setState({
+            firstname: event.target.firstname,
+            lastname: event.target.lastname,
+        });
+    }
+
+    handleSubmit(event) {
+        event.preventDefault();
+        const newPerson = this.state;
+        return this.props.handleNewPerson(newPerson);
+    }
+
     render() {
         // First render, before componentDidMount()
         if (this.state.persons.length === 0) {
@@ -43,9 +58,20 @@ class Person extends Component {
         return (
             <div>
 
-                <FormPerson handleNewPerson={newPerson => this.handleNewPerson(newPerson)} />
+                <form className="form-group text-center mt-3" onSubmit={e => this.handleSubmit(e)}>
+                    <input type="text" className="form-control form-control-lg"
+                           placeholder="Prénom"
+                           value={this.state.firstname}
+                           onChange={e => this.handleChange(e)} />
+                    <input type="text" className="form-control form-control-lg"
+                           placeholder="Nom"
+                           value={this.state.lastname}
+                           onChange={e => this.handleChange(e)} />
+                    <input type="submit" value="Ajouter" className="btn btn-outline-warning btn-lg m-2"/>
+                </form>
 
                 {items}
+
             </div>
         );
     }
