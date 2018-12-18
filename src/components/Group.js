@@ -6,17 +6,18 @@ import Expense from "./Expense";
 import Balance from "./Balance";
 
 class Group extends Component {
+
     render() {
         return (
             <div>
                 <Menu url={this.props.match.url} slug={this.props.match.params.slug} />
-                <Route path={this.props.match.url} exact component={Person}/>
-                {/*<Route path={this.props.match.url + "/expense"} component={Expense}/>*/}
-                {/*pour passer des paramètres (props) à un composant :*/}
+                {/* Routing with parameters (props) parsing to components */}
+                <Route path={this.props.match.url}
+                       render={ props => <Person {...props} slug={this.props.match.params.slug}/> }/>
                 <Route path={this.props.match.url + "/expense"}
                        render={ props => <Expense {...props} slug={this.props.match.params.slug}/> }/>
-
-                <Route path={this.props.match.url + "/balance"} component={Balance}/>
+                <Route path={this.props.match.url + "/balance"}
+                       render={ props => <Balance {...props} slug={this.props.match.params.slug}/> }/>
             </div>
         );
     }
