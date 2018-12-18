@@ -56,14 +56,17 @@ class Person extends Component {
     render() {
         // First render, before componentDidMount()
         if (this.state.persons.length === 0) {
-            return <div>Chargement en cours...</div>
+            return (
+                <div className="text-center text-black-50">
+                    <i className={"fas fa-spinner fa-2x fa-pulse "}></i>
+                </div>
+            )
         }
 
         const items = this.state.persons.map( person => <CardPerson key={person.id} person={person} /> );
 
         return (
             <div>
-
                 <form className="form-group text-center mt-3" onSubmit={e => this.handleSubmit(e)}>
                     <input type="text" className="form-control form-control-lg"
                            placeholder="Prénom"
@@ -77,9 +80,7 @@ class Person extends Component {
                            onChange={e => this.handleChange(e)} />
                     <input type="submit" value="Ajouter" className="btn btn-outline-warning btn-lg m-2"/>
                 </form>
-
                 {items}
-
             </div>
         );
     }

@@ -34,7 +34,11 @@ class CardPerson extends Component {
 
         // First render, before componentDidMount()
         if (this.state.expenses.length === 0) {
-            return <div>...</div>
+            return (
+                <div className="text-center text-black-50">
+                    <i className={"fas fa-spinner fa-2x fa-pulse "}></i>
+                </div>
+            )
         }
 
         // TODO : activer button

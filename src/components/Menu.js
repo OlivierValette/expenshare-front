@@ -31,7 +31,7 @@ class Menu extends Component {
                                 <NavLink to={this.props.url + "/balance"} className="nav-link">Équilibres</NavLink>
                             </li>
                         </ul>
-                        <span className="navbar-text">
+                        <span className="navbar-text text-primary lead">
                             <i>{this.props.slug}</i>
                         </span>
                     </div>
