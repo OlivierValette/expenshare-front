@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import FormExpense from "./FormExpense";
 import CardExpense from "./CardExpense";
+import {NavLink, Route} from "react-router-dom";
 
 class Expense extends Component {
 
@@ -15,8 +16,7 @@ class Expense extends Component {
 
     componentDidMount() {
         // get list of persons with expense in state through API (https://127.0.0.1/php/expenshare/public/expense/{slug})
-        // TODO : get the right parameter instead of the slug value used here
-        fetch ('http://127.0.0.1/php/expenshare/public/person/weekend-a-saint-malo-entre-amis', {
+        fetch ('http://127.0.0.1/php/expenshare/public/person/'+this.props.slug, {
             method: 'GET',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -38,8 +38,8 @@ class Expense extends Component {
 
         return (
             <div>
-
-                <FormExpense handleNewExpense={newExpense => this.handleNewExpense(newExpense)} />
+                <NavLink to={this.props.match.url + '/add'} className="btn btn-outline-primary mt-1">Enregistrez une dépense</NavLink>
+                <Route path={this.props.match.url + '/add'} component={FormExpense}/>
 
                 {items}
             </div>

@@ -23,6 +23,7 @@ class CardExpense extends Component {
             .then(console.log(this.state.expenses))
         ;
 
+        // TODO : see why does not work as expected!
         moment.locale('fr');
         console.log(moment.locale());
     }
@@ -31,10 +32,15 @@ class CardExpense extends Component {
 
         // First render, before componentDidMount()
         if (this.state.expenses.length === 0) {
-            return <div>...</div>
+            return (
+                <div className="text-center text-black-50">
+                    <i className={"fas fa-spinner fa-2x fa-pulse "}></i>
+                </div>
+            )
         }
 
-        // TODO : activer boutons
+        // TODO : activate 2 buttons
+        // TODO : bug fix on date delay of payment
 
         const item = this.state.expenses.map( expense => {
             return (

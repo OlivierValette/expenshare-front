@@ -22,10 +22,14 @@ class CardPerson extends Component {
             .then(data => this.setState({expenses: data}))
             .then(() => {
                 // get number and total amount of expenses for this user
-                let totalAmount = 0;
-                for (let i = 0; i < this.state.expenses.length; i++) {
-                    totalAmount += parseFloat(this.state.expenses[i].amount);
-                }
+                /*
+                    let totalAmount = 0;
+                    for (let i = 0; i < this.state.expenses.length; i++) {
+                        totalAmount += parseFloat(this.state.expenses[i].amount);
+                    }
+                */
+                // much cooler way to do this
+                const totalAmount = this.state.expenses.reduce( (sum, e) => sum + parseFloat(e.amount) , 0 );
                 this.setState({totalAmount});
             });
     }
@@ -41,15 +45,17 @@ class CardPerson extends Component {
             )
         }
 
-        // TODO : activer button
+        // TODO : activate suppress button with confirmation - mind cascading effect on related expenses
 
         return (
 
             <div className="row mt-1">
                 <div className="col-10">
                     <div className="alert alert-secondary" role="alert">
-                        <p> <strong>{this.props.person.firstname} {this.props.person.lastname} &nbsp;</strong>
-                            ({this.state.expenses.length} paiement{this.state.expenses.length>1 ? 's' : ''} d'un montant total de {this.state.totalAmount} €)
+                        <p>
+                            <strong>{this.props.person.firstname} {this.props.person.lastname} &nbsp;</strong>
+                            ({this.state.expenses.length} paiement{this.state.expenses.length>1 ? 's' : ''},&nbsp;
+                            d'un montant total de {this.state.totalAmount} €)
                         </p>
                     </div>
                 </div>

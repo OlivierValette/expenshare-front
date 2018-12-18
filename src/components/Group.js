@@ -12,7 +12,7 @@ class Group extends Component {
             <div>
                 <Menu url={this.props.match.url} slug={this.props.match.params.slug} />
                 {/* Routing with parameters (props) parsing to components */}
-                <Route path={this.props.match.url}
+                <Route path={this.props.match.url} exact
                        render={ props => <Person {...props} slug={this.props.match.params.slug}/> }/>
                 <Route path={this.props.match.url + "/expense"}
                        render={ props => <Expense {...props} slug={this.props.match.params.slug}/> }/>
