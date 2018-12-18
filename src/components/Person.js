@@ -7,15 +7,12 @@ class Person extends Component {
         super(props);
         this.state = {
             persons: [],
-            newPerson: {
-                firstname: '',
-                lastname: '',
-            },
+            firstname: '',
+            lastname: '',
         }
     }
 
     componentDidMount() {
-
         // get list of persons through API (https://127.0.0.1/php/expenshare/public/person/{slug})
         fetch ('http://127.0.0.1/php/expenshare/public/person/'+this.props.slug, {
             method: 'GET',
@@ -29,27 +26,21 @@ class Person extends Component {
 
     handleChange(event) {
         event.preventDefault();
+        const column = event.target.name;
+        // use of the ES6 computed property name syntax to update the state key corresponding to the given input name
         this.setState({
-            newPerson: {
-                firtname: event.target.value,
-                lastname: event.target.value},
+            [column]: event.target.value,
         });
     }
 
     handleSubmit(event) {
         event.preventDefault();
-
-        console.log(JSON.stringify({
-            firstname: this.state.newPerson.firstname,
-            lastname: this.state.newPerson.lastname,
-            slug: this.props.slug,
-        }));
-        // person creation in database
+        // person creation in database via API
         fetch('http://127.0.0.1/php/expenshare/public/person', {
             method: 'POST',
             body: JSON.stringify({
-                firstname: this.state.newPerson.firstname,
-                lastname: this.state.newPerson.lastname,
+                firstname: this.state.firstname,
+                lastname: this.state.lastname,
                 slug: this.props.slug,
             })
         })
@@ -76,11 +67,13 @@ class Person extends Component {
                 <form className="form-group text-center mt-3" onSubmit={e => this.handleSubmit(e)}>
                     <input type="text" className="form-control form-control-lg"
                            placeholder="Prénom"
-                           value={this.state.firstname}
+                           name="firstname"
+                           value={this.state.value}
                            onChange={e => this.handleChange(e)} />
                     <input type="text" className="form-control form-control-lg"
                            placeholder="Nom"
-                           value={this.state.lastname}
+                           name="lastname"
+                           value={this.state.value}
                            onChange={e => this.handleChange(e)} />
                     <input type="submit" value="Ajouter" className="btn btn-outline-warning btn-lg m-2"/>
                 </form>
