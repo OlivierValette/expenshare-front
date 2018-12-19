@@ -46,7 +46,10 @@ class Person extends Component {
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                // adding new person to person list in state
+                const persons = this.state.persons;
+                persons.push(JSON.parse(data));
+                this.setState({ persons: persons });
                 alert('Nouvelle personne créée avec succès !');
             })
             .catch(err => alert('Erreur lors de la création de la personne'))

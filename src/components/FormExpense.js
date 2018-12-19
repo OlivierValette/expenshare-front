@@ -18,21 +18,18 @@ class FormExpense extends Component {
 
         // get list of categories through API (https://127.0.0.1/php/expenshare/public/category)
         fetch ('http://127.0.0.1/php/expenshare/public/category/', {
-            method: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
+                method: 'GET',
+                headers: {'X-Requested-With': 'XMLHttpRequest'}
+            })
             .then(response => response.json())
             .then(data => this.setState({categories: data}));
 
         // get list of persons through API (https://127.0.0.1/php/expenshare/public/person/{slug})
+        console.log('http://127.0.0.1/php/expenshare/public/person/'+this.props.slug);
         fetch ('http://127.0.0.1/php/expenshare/public/person/'+this.props.slug, {
-            method: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
+                method: 'GET',
+                headers: {'X-Requested-With': 'XMLHttpRequest'}
+            })
             .then(response => response.json())
             .then(data => this.setState({persons: data}));
     }
@@ -48,8 +45,26 @@ class FormExpense extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        const newExpense = this.state;
-        return this.props.handleNewExpense(newExpense);
+        // expense creation in database via API
+        fetch('http://127.0.0.1/php/expenshare/public/expense', {
+                method: 'POST',
+                body: JSON.stringify({
+                    title: this.state.title,
+                    amount: this.state.amount,
+                    categoryId: this.state.categoryId,
+                    personId: this.state.personId,
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // adding new expense to expense list in state
+                const expenses = this.state.expenses;
+                expenses.push(JSON.parse(data));
+                this.setState({ expenses: expenses });
+                alert('Nouvelle dépense créée avec succès !');
+            })
+            .catch(err => alert('Erreur lors de la création de la dépense'))
+        ;
     }
 
     render() {
@@ -63,35 +78,45 @@ class FormExpense extends Component {
             )
         }
 
-        // TODO : finish expense form
-        const categories = this.state.categories.map( category => <option value={category.id}>{category.name}</option> );
-        const persons = this.state.persons.map( person => <option value={person.id}>{}</option> );
-
+        const categories = this.state.categories.map(
+            category => <option key={category.id} value={category.id}>{category.label}</option> );
+        const persons = this.state.persons.map(
+            person => <option key={person.id} value={person.id}>{person.firstname} {person.lastname}</option> );
 
         return (
-            <form className="form-group text-center mt-3" onSubmit={e => this.handleSubmit(e)}>
-                <input type="text" className="form-control"
-                       placeholder="Libellé"
-                       value={this.state.value}
-                       name="title"
-                       onChange={e => this.handleChange(e)} />
-                <input type="" className="form-control"
-                       placeholder="Montant"
-                       value={this.state.value}
-                       name="amount"
-                       onChange={e => this.handleChange(e)} />
-                <label>
-                    Choisissez la catégorie :
-                    <select value={this.state.value} name="categryId" onChange={e => this.handleChange(e)}>
+            <form className="form-group row mt-3" onSubmit={e => this.handleSubmit(e)}>
+                <label className="col-2 col-form-label">Libellé : </label>
+                <div className="col-10">
+                    <input type="text" className="form-control"
+                           placeholder="Libellé"
+                           value={this.state.value}
+                           name="title"
+                           onChange={e => this.handleChange(e)} />
+                </div>
+                <label className="col-2 col-form-label">Montant : </label>
+                <div className="col-10">
+                    <input type="" className="form-control"
+                           placeholder="Montant"
+                           value={this.state.value}
+                           name="amount"
+                           onChange={e => this.handleChange(e)} />
+                </div>
+                <label className="col-2 col-form-label">Choisissez la catégorie</label>
+                <div className="col-10">
+                    <select className="form-control" value={this.state.value} defaultValue="disabled"
+                            name="categoryId" onChange={e => this.handleChange(e)}>
+                        <option value="disabled" disabled>Catégorie...</option>
                         {categories}
                     </select>
-                </label>
-                <label>
-                    Choisissez la personne :
-                    <select value={this.state.value} name="categryId" onChange={e => this.handleChange(e)}>
+                </div>
+                <label className="col-2 col-form-label">Choisissez la personne</label>
+                <div className="col-10">
+                    <select className="form-control" value={this.state.value} defaultValue="disabled"
+                            name="personId" onChange={e => this.handleChange(e)}>
+                        <option value="disabled" disabled>Personne...</option>
                         {persons}
                     </select>
-                </label>
+                </div>
                 <input type="submit" value="Ajouter" className="btn btn-outline-warning btn-lg m-2"/>
             </form>
         )

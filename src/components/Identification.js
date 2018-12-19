@@ -69,7 +69,7 @@ class Identification extends Component {
                 })
                     .then(response => response.json())
                     .then(data => {
-                        console.log(data);
+                        // adding new sharegroup to sharegroup list in state
                         const groups = this.state.sharegroups;
                         groups.push(JSON.parse(data));
                         this.setState({ sharegroups: groups });
