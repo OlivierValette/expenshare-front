@@ -22,7 +22,7 @@ class FormExpense extends Component {
                 headers: {'X-Requested-With': 'XMLHttpRequest'}
             })
             .then(response => response.json())
-            .then(data => this.setState({categories: data}));
+            .then(data => this.setState({categories: JSON.parse(data)}));
 
         // get list of persons through API (https://127.0.0.1/php/expenshare/public/person/{slug})
         fetch ('http://127.0.0.1/php/expenshare/public/person/'+this.props.slug, {
@@ -30,7 +30,7 @@ class FormExpense extends Component {
                 headers: {'X-Requested-With': 'XMLHttpRequest'}
             })
             .then(response => response.json())
-            .then(data => this.setState({persons: data}));
+            .then(data => this.setState({persons: JSON.parse(data)}));
     }
 
     handleChange(event) {
@@ -57,7 +57,7 @@ class FormExpense extends Component {
             .then(response => response.json())
             .then( (data) => {
                 alert('Nouvelle dépense créée avec succès !');
-                this.props.callBack(data);
+                this.props.callBack(JSON.parse(data));
             })
             .catch(err => alert('Erreur lors de la création de la dépense'))
         ;
