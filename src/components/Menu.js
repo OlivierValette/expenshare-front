@@ -22,7 +22,7 @@ class Menu extends Component {
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav mr-auto">
                             <li className="nav-item">
-                                <NavLink to={this.props.url} className="nav-link">Participants</NavLink>
+                                <NavLink exact to={this.props.url} className="nav-link">Participants</NavLink>
                             </li>
                             <li className="nav-item">
                                 <NavLink to={this.props.url + "/expense"} className="nav-link">Dépenses</NavLink>
