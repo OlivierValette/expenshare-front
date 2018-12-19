@@ -25,7 +25,6 @@ class FormExpense extends Component {
             .then(data => this.setState({categories: data}));
 
         // get list of persons through API (https://127.0.0.1/php/expenshare/public/person/{slug})
-        console.log('http://127.0.0.1/php/expenshare/public/person/'+this.props.slug);
         fetch ('http://127.0.0.1/php/expenshare/public/person/'+this.props.slug, {
                 method: 'GET',
                 headers: {'X-Requested-With': 'XMLHttpRequest'}
@@ -56,12 +55,9 @@ class FormExpense extends Component {
                 })
             })
             .then(response => response.json())
-            .then(data => {
-                // adding new expense to expense list in state
-                const expenses = this.state.expenses;
-                expenses.push(JSON.parse(data));
-                this.setState({ expenses: expenses });
+            .then( () => {
                 alert('Nouvelle dépense créée avec succès !');
+                // this.props.callback(data);
             })
             .catch(err => alert('Erreur lors de la création de la dépense'))
         ;

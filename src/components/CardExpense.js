@@ -53,10 +53,14 @@ class CardExpense extends Component {
                             </div>
                         </div>
                         <div className="col-1 text-center">
-                            <button type = "button" className = "btn btn-outline-warning">Modifier</button>
+                            <button type = "button" className = "btn btn-outline-warning">
+                                Modifier
+                            </button>
                         </div>
                         <div className="col-2 text-center">
-                            <button type = "button" className = "btn btn-outline-danger">Supprimer</button>
+                            <button type = "button" className = "btn btn-outline-danger">
+                                Supprimer
+                            </button>
                         </div>
                     </div>
                     )

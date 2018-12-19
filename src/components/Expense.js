@@ -14,7 +14,9 @@ class Expense extends Component {
         }
     }
 
+
     componentDidMount() {
+
         // get list of persons with expense in state through API (https://127.0.0.1/php/expenshare/public/expense/{slug})
         fetch ('http://127.0.0.1/php/expenshare/public/person/'+this.props.slug, {
             method: 'GET',
@@ -32,6 +34,15 @@ class Expense extends Component {
             .then(response => response.json())
             .then(data => this.setState({sharegroup: data}))
         ;
+
+    }
+
+    // TODO : try to re-render page with new expense
+    updatePersons(newPerson) {
+        const persons = this.state.persons;
+        persons.push(newPerson);
+        this.setState({ persons: persons });
+        console.log('updating');
     }
 
     render() {
@@ -43,13 +54,14 @@ class Expense extends Component {
 
         return (
             <div>
-                {closed &&
+                {!closed &&
                     <NavLink to={this.props.match.url + '/add'} className="btn btn-outline-primary mt-1">
                         Enregistrez une dépense
                     </NavLink>
                 }
                 <Route path={this.props.match.url + "/add"}
-                       render={ props => <FormExpense {...props} slug={this.props.slug}/> }/>
+                       render={ props => <FormExpense {...props}
+                       slug={this.props.slug}/> }/>
 
                 {items}
             </div>
