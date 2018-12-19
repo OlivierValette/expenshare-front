@@ -6,18 +6,17 @@ class CardPerson extends Component {
         super(props);
         this.state = {
             expenses: [],
-            totalAmount: 0,
+            totalAmount: -1,
+            deletedPerson: '',
         }
     }
 
     componentDidMount() {
         // get list of expenses in state through API (https://127.0.0.1/php/expenshare/public/person/show/{id})
         fetch ('http://127.0.0.1/php/expenshare/public/person/show/'+this.props.person.id, {
-            method: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
+                method: 'GET',
+                headers: {'X-Requested-With': 'XMLHttpRequest'}
+            })
             .then(response => response.json())
             .then(data => this.setState({expenses: data}))
             .then(() => {
@@ -34,10 +33,24 @@ class CardPerson extends Component {
             });
     }
 
+    handleClick(action) {
+        if (action === 'delete') {
+            if (window.confirm("Confirmez-vous la suppression ?")) {
+                fetch ('http://127.0.0.1/php/expenshare/public/person/delete/' + this.props.person.id, {
+                        method: 'DELETE',
+                        headers: {'X-Requested-With': 'XMLHttpRequest'}
+                    })
+                    .then(response => response.json())
+                    .then(data => this.setState({deletedPerson: data}))
+                ;
+            }
+        }
+    }
+
     render() {
 
         // First render, before componentDidMount()
-        if (this.state.expenses.length === 0) {
+        if (this.state.totalAmount === -1) {
             return (
                 <div className="text-center text-black-50">
                     <i className={"fas fa-spinner fa-2x fa-pulse "}></i>
@@ -60,7 +73,10 @@ class CardPerson extends Component {
                     </div>
                 </div>
                 <div className="col-2 text-center">
-                    <button type = "button" className = "btn btn-outline-danger">Supprimer</button>
+                    <button type = "button" className = "btn btn-outline-danger"
+                            onClick = { () => this.handleClick('delete') }>
+                        Supprimer
+                    </button>
                 </div>
             </div>
         );
