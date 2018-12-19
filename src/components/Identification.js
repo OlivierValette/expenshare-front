@@ -17,13 +17,11 @@ class Identification extends Component {
     componentDidMount() {
         // get list of sharegroups in state through API (https://http://127.0.0.1/php/exepenshare/public/sharegroup)
         fetch ('http://127.0.0.1/php/expenshare/public/sharegroup',{
-            method: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
+                method: 'GET',
+                headers: {'X-Requested-With': 'XMLHttpRequest'}
+            })
             .then(response => response.json())
-            .then(data => this.setState({sharegroups: data}))
+            .then(data => this.setState({sharegroups: JSON.parse(data)}))
         ;
     }
 
@@ -64,16 +62,16 @@ class Identification extends Component {
             } else {
                 // sharegroup creation in database
                 fetch('http://127.0.0.1/php/expenshare/public/sharegroup/', {
-                    method: 'POST',
-                    body: JSON.stringify({ slug: this.state.value })
-                })
+                        method: 'POST',
+                        body: JSON.stringify({ slug: slug })
+                    })
                     .then(response => response.json())
                     .then(data => {
                         // adding new sharegroup to sharegroup list in state
                         const groups = this.state.sharegroups;
                         groups.push(JSON.parse(data));
                         this.setState({ sharegroups: groups });
-                        alert('Nouveau groupe créé avec succès !');
+                        alert('Nouveau groupe ' + slug + ' créé avec succès !');
                     })
                     .catch(err => alert('Erreur lors de la création du groupe'))
                 ;
@@ -86,7 +84,6 @@ class Identification extends Component {
                 fetch('http://127.0.0.1/php/expenshare/public/sharegroup/' + slug)
                     .then(response => response.json())
                     .then(data => {
-                        console.log(data);
                         this.setState({ sharegroup: JSON.parse(data) });
                     })
                     .catch(err => alert('Erreur API'))

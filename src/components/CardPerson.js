@@ -18,7 +18,7 @@ class CardPerson extends Component {
                 headers: {'X-Requested-With': 'XMLHttpRequest'}
             })
             .then(response => response.json())
-            .then(data => this.setState({expenses: data}))
+            .then(data => this.setState({expenses: JSON.parse(data)}))
             .then(() => {
                 // get number and total amount of expenses for this user
                 /*
@@ -41,7 +41,7 @@ class CardPerson extends Component {
                         headers: {'X-Requested-With': 'XMLHttpRequest'}
                     })
                     .then(response => response.json())
-                    .then(data => this.setState({deletedPerson: data}))
+                    .then(data => this.setState({deletedPerson: JSON.parse(data)}))
                 ;
             }
         }
