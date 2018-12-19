@@ -6,6 +6,7 @@ class Person extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            sharegroup: null,
             persons: [],
             firstname: '',
             lastname: '',
@@ -15,13 +16,23 @@ class Person extends Component {
     componentDidMount() {
         // get list of persons through API (https://127.0.0.1/php/expenshare/public/person/{slug})
         fetch ('http://127.0.0.1/php/expenshare/public/person/'+this.props.slug, {
-            method: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
             .then(response => response.json())
-            .then(data => this.setState({persons: data}));
+            .then(data => this.setState({persons: data}))
+        ;
+
+        // get sharegroup in state through API (https://127.0.0.1/php/expenshare/public/sharegroup/{slug})
+        fetch ('http://127.0.0.1/php/expenshare/public/sharegroup/'+this.props.slug, {
+                method: 'GET',
+                headers: {'X-Requested-With': 'XMLHttpRequest'}
+            })
+            .then(response => response.json())
+            .then(data => this.setState({sharegroup: JSON.parse(data)}))
+        ;
     }
 
     handleChange(event) {
@@ -57,8 +68,9 @@ class Person extends Component {
     }
 
     render() {
+
         // First render, before componentDidMount()
-        if (this.state.persons.length === 0) {
+        if (this.state.persons.length === 0 || this.state.sharegroup === null) {
             return (
                 <div className="text-center text-black-50">
                     <i className={"fas fa-spinner fa-2x fa-pulse "}></i>
@@ -67,22 +79,25 @@ class Person extends Component {
         }
 
         const items = this.state.persons.map( person => <CardPerson key={person.id} person={person} /> );
+        console.log(this.state.sharegroup, this.state.sharegroup.closed);
 
         return (
             <div>
-                <form className="form-group text-center mt-3" onSubmit={e => this.handleSubmit(e)}>
-                    <input type="text" className="form-control form-control-lg"
-                           placeholder="Prénom"
-                           name="firstname"
-                           value={this.state.value}
-                           onChange={e => this.handleChange(e)} />
-                    <input type="text" className="form-control form-control-lg"
-                           placeholder="Nom"
-                           name="lastname"
-                           value={this.state.value}
-                           onChange={e => this.handleChange(e)} />
-                    <input type="submit" value="Ajouter" className="btn btn-outline-warning btn-lg m-2"/>
-                </form>
+                {!this.state.sharegroup.closed &&
+                    <form className="form-group text-center mt-3" onSubmit={e => this.handleSubmit(e)}>
+                        <input type="text" className="form-control form-control-lg"
+                               placeholder="Prénom"
+                               name="firstname"
+                               value={this.state.value}
+                               onChange={e => this.handleChange(e)} />
+                        <input type="text" className="form-control form-control-lg"
+                               placeholder="Nom"
+                               name="lastname"
+                               value={this.state.value}
+                               onChange={e => this.handleChange(e)} />
+                        <input type="submit" value="Ajouter" className="btn btn-outline-warning btn-lg m-2"/>
+                    </form>
+                }
                 {items}
             </div>
         );

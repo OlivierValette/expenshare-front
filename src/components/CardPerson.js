@@ -58,7 +58,7 @@ class CardPerson extends Component {
             )
         }
 
-        // TODO : activate suppress button with confirmation - mind cascading effect on related expenses
+        // TODO : close shargegroup button to implement
 
         return (
 
@@ -67,8 +67,12 @@ class CardPerson extends Component {
                     <div className="alert alert-secondary" role="alert">
                         <p>
                             <strong>{this.props.person.firstname} {this.props.person.lastname} &nbsp;</strong>
-                            ({this.state.expenses.length} paiement{this.state.expenses.length>1 ? 's' : ''},&nbsp;
-                            d'un montant total de {this.state.totalAmount} €)
+                            { this.state.expenses.length > 0 &&
+                                <span>
+                                    ({this.state.expenses.length} paiement{this.state.expenses.length>1 ? 's' : ''},&nbsp;
+                                    d'un montant total de {this.state.totalAmount} €)
+                                </span>
+                            }
                         </p>
                     </div>
                 </div>

@@ -38,10 +38,10 @@ class Expense extends Component {
     }
 
     // TODO : try to re-render page with new expense
-    updatePersons(newPerson) {
-        const persons = this.state.persons;
-        persons.push(newPerson);
-        this.setState({ persons: persons });
+    updateExpenses(newExpense) {
+        const expenses = this.state.expenses;
+        expenses.push(newExpense);
+        this.setState({ expenses: expenses });
         console.log('updating');
     }
 
@@ -61,7 +61,8 @@ class Expense extends Component {
                 }
                 <Route path={this.props.match.url + "/add"}
                        render={ props => <FormExpense {...props}
-                       slug={this.props.slug}/> }/>
+                       slug={this.props.slug}
+                       callBack={expense => this.updateExpenses(expense)}/> }/>
 
                 {items}
             </div>

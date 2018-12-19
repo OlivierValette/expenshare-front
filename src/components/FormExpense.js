@@ -55,9 +55,9 @@ class FormExpense extends Component {
                 })
             })
             .then(response => response.json())
-            .then( () => {
+            .then( (data) => {
                 alert('Nouvelle dépense créée avec succès !');
-                // this.props.callback(data);
+                this.props.callBack(data);
             })
             .catch(err => alert('Erreur lors de la création de la dépense'))
         ;
