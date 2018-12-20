@@ -84,8 +84,6 @@ class Balance extends Component {
 
     // create a balance transaction between two persons
     addTransaction(transactions, amount, fromId, toId) {
-        // if negative amount swap from and to
-        if (amount < 0) { [fromId, toId] = [toId, fromId]; }
         transactions.push({
             indexT: transactions.length,
             transacAmount: amount,
@@ -93,6 +91,42 @@ class Balance extends Component {
             toId: toId,
         });
         return transactions;
+    }
+
+    // find index of minimum value in an array of objects person
+    // using this function instead of one line solution that causes unexpected results
+    //  per.reduce((iMin, p, i, per) => p.totalAmount < per[iMin].totalAmount ? i : iMin, 0);
+    indexOfMinDebt(arr) {
+        if (arr.length === 0) {
+            return -1;
+        }
+        let min = arr[0].debt;
+        let minIndex = 0;
+        for (let i = 1; i < arr.length; i++) {
+            if (arr[i].debt < min) {
+                minIndex = i;
+                min = arr[i].debt;
+            }
+        }
+        return minIndex;
+    }
+
+    // find index of maximum value in an array of objects person
+    // using this function instead of one line solution that causes unexpected results
+    //  per.reduce((iMax, p, i, per) => p.totalAmount > per[iMax].totalAmount ? i : iMax, 0);
+    indexOfMaxDebt(arr) {
+        if (arr.length === 0) {
+            return -1;
+        }
+        let max = arr[0].debt;
+        let maxIndex = 0;
+        for (let i = 1; i < arr.length; i++) {
+            if (arr[i].debt > max) {
+                maxIndex = i;
+                max = arr[i].debt;
+            }
+        }
+        return maxIndex;
     }
 
     // Balancing debts
@@ -112,7 +146,8 @@ class Balance extends Component {
             per[1].debt = 0;
             return true;
         }
-        // do {
+        for (let attempt = 0; attempt < 10; attempt++) {
+            debugger;
             // First, check if two debts exactly compensate
             let isMatch = false;
             for (let i=0; i<per.length-2; i++) {
@@ -130,8 +165,14 @@ class Balance extends Component {
             }
             // Otherwise, compensate between extreme debts
             if (!isMatch) {
-                let indexOfMinValue = per.reduce((iMin, p, i, per) => p.totalAmount < per[iMin].totalAmount ? i : iMin, 0);
-                let indexOfMaxValue = per.reduce((iMax, p, i, per) => p.totalAmount > per[iMax].totalAmount ? i : iMax, 0);
+                console.log(per);
+                let indexOfMinValue = this.indexOfMinDebt(per);
+                let indexOfMaxValue = this.indexOfMaxDebt(per);
+                //
+                if (Math.abs(per[indexOfMinValue].debt) > Math.abs(per[indexOfMinValue].debt)) {
+                    // swap indexes
+                    [indexOfMinValue, indexOfMinValue] = [indexOfMinValue, indexOfMinValue];
+                }
                 console.log('Index min: ', indexOfMinValue, ' - Index max: ', indexOfMaxValue);
                 this.setState.transactions = this.addTransaction(
                     transactions,
@@ -140,10 +181,10 @@ class Balance extends Component {
                     per[indexOfMaxValue].id
                 );
                 // reduce debs of transaction amount
-                // TODO : bug!
-                debugger;
-                per[indexOfMinValue].debt += - Math.abs(per[indexOfMinValue].debt);
-                per[indexOfMaxValue].debt += Math.abs(per[indexOfMinValue].debt);
+                let compensate = Math.abs(per[indexOfMinValue].debt);
+                console.log(compensate);
+                per[indexOfMinValue].debt = Math.round(100.* (per[indexOfMinValue].debt - compensate)) / 100.;
+                per[indexOfMaxValue].debt = Math.round(100.* (per[indexOfMaxValue].debt + compensate)) / 100.;
                 console.log(transactions);
                 this.setState({transactions: transactions});
                 // count again what is to be done
@@ -155,7 +196,7 @@ class Balance extends Component {
                 console.log(per);
             }
 
-        // } while (toBeDone > 0);
+        }
         return true;
     }
 
