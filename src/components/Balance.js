@@ -15,6 +15,7 @@ class Balance extends Component {
             sharegroup: '',
             totalNumber: 0,
             totalAmount: 0,
+            transactions: [],
         }
     }
 
@@ -44,6 +45,7 @@ class Balance extends Component {
             .then(data => this.setState({expenses: JSON.parse(data)}))
             .then(() => this.setState({notReady: false}))
             .then(() => this.computations())
+            // .then(() => this.balances())
         ;
     }
 
@@ -84,9 +86,59 @@ class Balance extends Component {
         console.log('debts:', debts);
     }
 
+    // create a balance transaction between two persons
+    addTransaction(transactions, amount, fromId, toId) {
+        // if negative amount swap from and to
+        if (amount < 0) { [fromId, toId] = [toId, fromId]; }
+        transactions.push({
+          amount: amount,
+          from: fromId,
+          to: toId,
+        });
+        return transactions;
+    }
+
     // Balancing debts
     balances() {
+        debugger;
+        let persons = this.state.persons;
+        let transactions = [];
+        let toBeDone = persons.length-2;
+        // process is to be done until there is 2 persons left
+        if (toBeDone < 0) {
+            // less than 2 person in group... come on, be serious
+            return false;
+        }
+        if (toBeDone === 0) {
+            // 2 person in group... easy
+            this.setState.transactions = this.addTransaction(transactions, persons[0].debt, persons.id[0], persons.id[1]);
+            return true;
+        }
+        // do {
+            // First, check if two debts exactly compensate
+            let isMatch = false;
+            for (let i=0; i<persons.length-2; i++) {
+                for (let j=i+1; i<persons.length-2; j++) {
+                    if (persons[i].debt !== 0 && persons[i].debt !== 0) {
+                        if (persons[i].debt + persons[i].debt == 0) {
+                            this.setState.transactions = this.addTransaction(transactions, persons[0].debt, persons.id[0], persons.id[1]);
+                            isMatch = true;
+                            toBeDone = toBeDone - 2;
+                        }
+                    }
+                }
+            }
+            // Otherwise, compensate between extreme debts
+            if (!isMatch) {
+                let indexOfMinValue = persons.reduce((iMin, x, i, p) => x < persons[iMin] ? i : iMin, 0);
+                let indexOfMaxValue = persons.reduce((iMax, x, i, p) => x > persons[iMax] ? i : iMax, 0);
+                console.log('min ', indexOfMinValue, 'max ', indexOfMaxValue);
+                toBeDone = 0;
+                return true;
+            }
 
+        // } while (toBeDone > 0);
+        return true;
     }
 
     render() {
@@ -98,13 +150,22 @@ class Balance extends Component {
                 </div>
             )
         }
-        const balances = this.state.persons.map( person => (
-                <p key={person.id}>
-                    {person.firstname} a dépensé {person.totalAmount} et doit
-                    { (person.debt > 0) ? 'recevoir' : 'donner' } {person.debt}
-                </p>
+        const balances = this.state.persons.map( person => {
+            return (
+                <div key={person.id}>
+                    {person.firstname + ' a dépensé ' + person.totalAmount + ' € et doit ' + ( (person.debt > 0) ? 'donner ' : 'recevoir ' ) + Math.abs(person.debt) + ' €'}
+                </div>
             )
-        );
+        });
+
+        const transactions = this.state.transactions.map( transaction => {
+            return (
+                <div key={transaction.id}>
+                    {transaction.amont + ' --> de : ' + transaction.from + ' à : ' + transaction.to}
+                </div>
+            )
+        });
+
         return (
             <div>
                 <h3>Bilan des dépenses du groupe</h3>
@@ -121,9 +182,12 @@ class Balance extends Component {
                     </div>
                 </div>
                 <h3>Équilibre des dépenses du groupe</h3>
-                    <div className="row mt-1">
-                        {balances}
-                    </div>
+                <div className="mt-1">
+                    {balances}
+                </div>
+                <div className="mt-1">
+                    {transactions}
+                </div>
             </div>
         );
     }
