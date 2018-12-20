@@ -10,7 +10,7 @@ class Expense extends Component {
         this.state = {
             sharegroup: '',
             persons: [],
-            expenses: [],
+            toRefresh: '',
         }
     }
 
@@ -31,15 +31,6 @@ class Expense extends Component {
             .then(response => response.json())
             .then(data => this.setState({sharegroup: JSON.parse(data)}))
         ;
-    }
-
-    //  update state to re-render page with new expense
-    updateExpenses(newExpense) {
-        console.log(this.state.expenses);
-        const expenses = this.state.expenses;
-        expenses.push(newExpense);
-        this.setState({ expenses: expenses });
-        console.log(this.state.expenses);
     }
 
     render() {
@@ -65,9 +56,10 @@ class Expense extends Component {
                 <Route path={this.props.match.url + "/add"}
                        render={ props => <FormExpense {...props}
                        slug={this.props.slug}
-                       callBack={expense => this.updateExpenses(expense)}/> }/>
+                       callBack={expense => this.setState({toRefresh: ' '})}/> }/>
 
                 {items}
+                {this.state.toRefresh}
             </div>
         );
     }
