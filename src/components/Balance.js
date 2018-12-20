@@ -97,7 +97,6 @@ class Balance extends Component {
 
     // Balancing debts
     balances() {
-        debugger;
         let per = this.state.persons;
         let transactions = [];
         let toBeDone = per.length-2;
@@ -142,6 +141,7 @@ class Balance extends Component {
                 );
                 // reduce debs of transaction amount
                 // TODO : bug!
+                debugger;
                 per[indexOfMinValue].debt += - Math.abs(per[indexOfMinValue].debt);
                 per[indexOfMaxValue].debt += Math.abs(per[indexOfMinValue].debt);
                 console.log(transactions);
@@ -149,7 +149,7 @@ class Balance extends Component {
                 // count again what is to be done
                 toBeDone = -2;
                 for (let i=0; i<per.length; i++) {
-                    toBeDone = toBeDone + (per[i].debt > 0 ? 1 : 0 )
+                    toBeDone = toBeDone + (per[i].debt === 0 ? 0 : 1 )
                 }
                 console.log(toBeDone);
                 console.log(per);
