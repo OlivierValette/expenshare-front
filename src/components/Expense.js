@@ -56,7 +56,7 @@ class Expense extends Component {
                 <Route path={this.props.match.url + "/add"}
                        render={ props => <FormExpense {...props}
                        slug={this.props.slug}
-                       callBack={expense => this.setState({toRefresh: ' '})}/> }/>
+                       callBack={() => this.setState({toRefresh: ' '})}/> }/>
 
                 {items}
                 {this.state.toRefresh}

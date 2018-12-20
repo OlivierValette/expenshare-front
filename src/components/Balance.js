@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import CardPerson from "./CardPerson";
 
 class Balance extends Component {
 
@@ -45,7 +44,7 @@ class Balance extends Component {
             .then(data => this.setState({expenses: JSON.parse(data)}))
             .then(() => this.setState({notReady: false}))
             .then(() => this.computations())
-            // .then(() => this.balances())
+            .then(() => this.balances())
         ;
     }
 
@@ -54,14 +53,13 @@ class Balance extends Component {
         let expenses = this.state.expenses;
         let persons = this.state.persons;
         let debts = [];
-        console.log('expenses: ', expenses);
         // First, only keep expenses of sharegroup
         for (let i = expenses.length; i--;) {
             if (expenses[i].person.shareGroup.slug !== this.props.slug) { expenses.splice(i,1); }
         }
         this.setState({expenses: expenses});
         // get clusters on expenses of sharegroup
-        this.setState({totalNumber: expenses.length});
+        this.setState({totalNumber: persons.length});
         this.setState({totalAmount:
                 Math.round(100. * expenses.reduce( (sum, e) => sum + parseFloat(e.amount) , 0 ) ) / 100.
             });
@@ -73,11 +71,9 @@ class Balance extends Component {
             ) / 100.;
         }
         // compute debt of persons
-        let cost = this.state.totalAmount/this.state.totalNumber;
+        let cost = (this.state.totalNumber === 0) ? 0 : this.state.totalAmount/this.state.totalNumber;
         for (let i = 0; i < persons.length; i++) {
-            debts[i] = Math.round(100. *
-                ((this.state.totalNumber === 0) ? 0 : cost - persons[i].totalAmount)
-            ) / 100.;
+            debts[i] = Math.round(100. * (cost - persons[i].totalAmount) ) / 100.;
             persons[i].debt = debts[i];
         }
         this.setState({persons: persons});
@@ -91,9 +87,10 @@ class Balance extends Component {
         // if negative amount swap from and to
         if (amount < 0) { [fromId, toId] = [toId, fromId]; }
         transactions.push({
-          amount: amount,
-          from: fromId,
-          to: toId,
+            indexT: transactions.length,
+            transacAmount: amount,
+            fromId: fromId,
+            toId: toId,
         });
         return transactions;
     }
@@ -101,9 +98,9 @@ class Balance extends Component {
     // Balancing debts
     balances() {
         debugger;
-        let persons = this.state.persons;
+        let per = this.state.persons;
         let transactions = [];
-        let toBeDone = persons.length-2;
+        let toBeDone = per.length-2;
         // process is to be done until there is 2 persons left
         if (toBeDone < 0) {
             // less than 2 person in group... come on, be serious
@@ -111,30 +108,51 @@ class Balance extends Component {
         }
         if (toBeDone === 0) {
             // 2 person in group... easy
-            this.setState.transactions = this.addTransaction(transactions, persons[0].debt, persons.id[0], persons.id[1]);
+            this.setState.transactions = this.addTransaction(transactions, per[0].debt, per.id[0], per.id[1]);
+            per[0].debt = 0;
+            per[1].debt = 0;
             return true;
         }
         // do {
             // First, check if two debts exactly compensate
             let isMatch = false;
-            for (let i=0; i<persons.length-2; i++) {
-                for (let j=i+1; i<persons.length-2; j++) {
-                    if (persons[i].debt !== 0 && persons[i].debt !== 0) {
-                        if (persons[i].debt + persons[i].debt == 0) {
-                            this.setState.transactions = this.addTransaction(transactions, persons[0].debt, persons.id[0], persons.id[1]);
+            for (let i=0; i<per.length-2; i++) {
+                for (let j=i+1; j<per.length-2; j++) {
+                    if (per[i].debt !== 0 && per[j].debt !== 0) {
+                        if (per[i].debt + per[j].debt === 0) {
+                            this.setState.transactions = this.addTransaction(transactions, per[i].debt, per.id[i], per.id[j]);
+                            per[i].debt = 0;
+                            per[j].debt = 0;
                             isMatch = true;
-                            toBeDone = toBeDone - 2;
+                            toBeDone += -2;
                         }
                     }
                 }
             }
             // Otherwise, compensate between extreme debts
             if (!isMatch) {
-                let indexOfMinValue = persons.reduce((iMin, x, i, p) => x < persons[iMin] ? i : iMin, 0);
-                let indexOfMaxValue = persons.reduce((iMax, x, i, p) => x > persons[iMax] ? i : iMax, 0);
-                console.log('min ', indexOfMinValue, 'max ', indexOfMaxValue);
-                toBeDone = 0;
-                return true;
+                let indexOfMinValue = per.reduce((iMin, p, i, per) => p.totalAmount < per[iMin].totalAmount ? i : iMin, 0);
+                let indexOfMaxValue = per.reduce((iMax, p, i, per) => p.totalAmount > per[iMax].totalAmount ? i : iMax, 0);
+                console.log('Index min: ', indexOfMinValue, ' - Index max: ', indexOfMaxValue);
+                this.setState.transactions = this.addTransaction(
+                    transactions,
+                    per[indexOfMinValue].debt,
+                    per[indexOfMinValue].id,
+                    per[indexOfMaxValue].id
+                );
+                // reduce debs of transaction amount
+                // TODO : bug!
+                per[indexOfMinValue].debt += - Math.abs(per[indexOfMinValue].debt);
+                per[indexOfMaxValue].debt += Math.abs(per[indexOfMinValue].debt);
+                console.log(transactions);
+                this.setState({transactions: transactions});
+                // count again what is to be done
+                toBeDone = -2;
+                for (let i=0; i<per.length; i++) {
+                    toBeDone = toBeDone + (per[i].debt > 0 ? 1 : 0 )
+                }
+                console.log(toBeDone);
+                console.log(per);
             }
 
         // } while (toBeDone > 0);
@@ -150,7 +168,7 @@ class Balance extends Component {
                 </div>
             )
         }
-        const balances = this.state.persons.map( person => {
+        const bals = this.state.persons.map( person => {
             return (
                 <div key={person.id}>
                     {person.firstname + ' a dépensé ' + person.totalAmount + ' € et doit ' + ( (person.debt > 0) ? 'donner ' : 'recevoir ' ) + Math.abs(person.debt) + ' €'}
@@ -158,11 +176,16 @@ class Balance extends Component {
             )
         });
 
-        const transactions = this.state.transactions.map( transaction => {
+        const transacs = this.state.transactions.map( transaction => {
             return (
-                <div key={transaction.id}>
-                    {transaction.amont + ' --> de : ' + transaction.from + ' à : ' + transaction.to}
-                </div>
+                <ol key={transaction.indexT}>
+                    <li>
+                        {transaction.transacAmount + ' € à payer par ' +
+                        this.state.persons.find(o => o.id === transaction.fromId).firstname +
+                        ' à ' +
+                        this.state.persons.find(o => o.id === transaction.toId).firstname }
+                    </li>
+                </ol>
             )
         });
 
@@ -183,10 +206,11 @@ class Balance extends Component {
                 </div>
                 <h3>Équilibre des dépenses du groupe</h3>
                 <div className="mt-1">
-                    {balances}
+                    {bals}
                 </div>
                 <div className="mt-1">
-                    {transactions}
+                    <h4>Opérations suggérées</h4>
+                    {transacs}
                 </div>
             </div>
         );
