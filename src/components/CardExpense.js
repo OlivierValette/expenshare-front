@@ -52,7 +52,7 @@ class CardExpense extends Component {
                 </div>
             )
         }
-
+        console.log(this.state.expenses);
         // TODO : activate correct update button (see where to do it?)
         // TODO : bug fix on date delay of payment
 
@@ -65,7 +65,7 @@ class CardExpense extends Component {
                                         <i className={"fas " + expense.category.icon + " fa-2x fa-fw"}></i> &nbsp;
                                         <strong>{expense.category.label} ({expense.amount} €) &nbsp;</strong>
                                         payé par {expense.person.firstname} &nbsp;
-                                        {moment(expense.createdAt.date).startOf('day').fromNow()}
+                                        {moment(expense.createdAt.dateTime).startOf('day').fromNow()}
                                     </p>
                                 </div>
                             </div>
