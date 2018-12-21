@@ -51,6 +51,11 @@ class Balance extends Component {
         let expenses = this.state.expenses;
         let persons = this.state.persons;
         let debts = [];
+        // First, check if there is someone in there!
+        if (persons.length === 0) {
+            console.log('No one, no debt');
+            return
+        }
         // First, only keep expenses of sharegroup
         for (let i = expenses.length; i--;) {
             if (expenses[i].person.shareGroup.slug !== this.props.slug) { expenses.splice(i,1); }
@@ -69,7 +74,7 @@ class Balance extends Component {
             ) / 100.;
         }
         // compute debt of persons
-        let cost = (this.state.totalNumber === 0) ? 0 : this.state.totalAmount/this.state.totalNumber;
+        let cost = this.state.totalAmount / persons.length;
         for (let i = 0; i < persons.length; i++) {
             debts[i] = Math.round(100. * (cost - persons[i].totalAmount) ) / 100.;
             persons[i].debt = debts[i];
@@ -132,10 +137,11 @@ class Balance extends Component {
     balances() {
         let per = this.state.persons;
         let transactions = [];
-        let toBeDone = per.length;
         // process is to be done until there is 2 persons left
+        let toBeDone = per.length;
+        // less than 2 person in group... come on, be serious
         if (toBeDone < 2) {
-            // less than 2 person in group... come on, be serious
+            console.log('At least two persons are needed to compensate');
             return false;
         }
         // check if no debt at all
