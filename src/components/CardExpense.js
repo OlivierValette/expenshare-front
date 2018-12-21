@@ -53,8 +53,7 @@ class CardExpense extends Component {
             )
         }
 
-        // TODO : activate update button (where to do it?)
-        // TODO : activate delete button
+        // TODO : activate correct update button (see where to do it?)
         // TODO : bug fix on date delay of payment
 
         const item = this.state.expenses.map( expense => {
