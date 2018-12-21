@@ -2,8 +2,6 @@ import React, {Component} from 'react';
 
 class Balance extends Component {
 
-    // TODO : give stats on group expenses and balance debts
-
     constructor(props) {
         super(props);
         this.state = {
@@ -35,7 +33,7 @@ class Balance extends Component {
             .then(response => response.json())
             .then(data => this.setState({sharegroup: JSON.parse(data)}))
         ;
-        // get list of expenses of person through API (https://127.0.0.1/php/expenshare/public/expense/show/{id})
+        // get list of expenses through API (https://127.0.0.1/php/expenshare/public/expense/list)
         fetch ('http://127.0.0.1/php/expenshare/public/expense/list/', {
             method: 'GET',
             headers: {'X-Requested-With': 'XMLHttpRequest'}
@@ -59,7 +57,7 @@ class Balance extends Component {
         }
         this.setState({expenses: expenses});
         // get clusters on expenses of sharegroup
-        this.setState({totalNumber: persons.length});
+        this.setState({totalNumber: expenses.length});
         this.setState({totalAmount:
                 Math.round(100. * expenses.reduce( (sum, e) => sum + parseFloat(e.amount) , 0 ) ) / 100.
             });
@@ -83,6 +81,7 @@ class Balance extends Component {
     }
 
     // create a balance transaction between two persons
+    // TODO : update database table debt
     addTransaction(transactions, amount, fromId, toId) {
         transactions.push({
             indexT: transactions.length,
@@ -94,7 +93,7 @@ class Balance extends Component {
     }
 
     // find index of minimum value in an array of objects person
-    // using this function instead of one line solution that causes unexpected results
+    // using this function instead of one line solution that causes unexpected results (babel?)
     //  per.reduce((iMin, p, i, per) => p.totalAmount < per[iMin].totalAmount ? i : iMin, 0);
     indexOfMinDebt(arr) {
         if (arr.length === 0) {
@@ -112,7 +111,7 @@ class Balance extends Component {
     }
 
     // find index of maximum value in an array of objects person
-    // using this function instead of one line solution that causes unexpected results
+    // using this function instead of one line solution that causes unexpected results (babel?)
     //  per.reduce((iMax, p, i, per) => p.totalAmount > per[iMax].totalAmount ? i : iMax, 0);
     indexOfMaxDebt(arr) {
         if (arr.length === 0) {
@@ -133,27 +132,32 @@ class Balance extends Component {
     balances() {
         let per = this.state.persons;
         let transactions = [];
-        let toBeDone = per.length-2;
+        let toBeDone = per.length;
         // process is to be done until there is 2 persons left
-        if (toBeDone < 0) {
+        if (toBeDone < 2) {
             // less than 2 person in group... come on, be serious
             return false;
         }
-        if (toBeDone === 0) {
-            // 2 person in group... easy
+        // check if no debt at all
+        if (this.state.debts.every( i => i === 0 )) {
+            console.log('No debt to compensate');
+            return true }
+        // special case: only 2 person in group... easy
+        if (toBeDone === 2) {
             this.setState.transactions = this.addTransaction(transactions, per[0].debt, per.id[0], per.id[1]);
             per[0].debt = 0;
             per[1].debt = 0;
             return true;
         }
-        for (let attempt = 0; attempt < 10; attempt++) {
-            debugger;
-            // First, check if two debts exactly compensate
+        // security loop counter
+        let attempt = 0;
+        do {
+            // First, check if two debts "exactly" compensate (in fact to the nearest cent)
             let isMatch = false;
             for (let i=0; i<per.length-2; i++) {
                 for (let j=i+1; j<per.length-2; j++) {
                     if (per[i].debt !== 0 && per[j].debt !== 0) {
-                        if (per[i].debt + per[j].debt === 0) {
+                        if (Math.abs(per[i].debt + per[j].debt) < 0.02) {
                             this.setState.transactions = this.addTransaction(transactions, per[i].debt, per.id[i], per.id[j]);
                             per[i].debt = 0;
                             per[j].debt = 0;
@@ -163,41 +167,51 @@ class Balance extends Component {
                     }
                 }
             }
-            // Otherwise, compensate between extreme debts
+            // Otherwise, compensate between extreme debts, from positive sign to negative
             if (!isMatch) {
                 console.log(per);
-                let indexOfMinValue = this.indexOfMinDebt(per);
-                let indexOfMaxValue = this.indexOfMaxDebt(per);
-                //
-                if (Math.abs(per[indexOfMinValue].debt) > Math.abs(per[indexOfMinValue].debt)) {
-                    // swap indexes
-                    [indexOfMinValue, indexOfMinValue] = [indexOfMinValue, indexOfMinValue];
-                }
+                let indexOfMinValue = this.indexOfMinDebt(per); // should be of negative sign
+                let indexOfMaxValue = this.indexOfMaxDebt(per); // should be of positive sign
                 console.log('Index min: ', indexOfMinValue, ' - Index max: ', indexOfMaxValue);
+                // the value of the transaction is the smallest debt
+                let compensate = Math.min(Math.abs(per[indexOfMinValue].debt), Math.abs(per[indexOfMinValue].debt));
+                console.log(compensate);
                 this.setState.transactions = this.addTransaction(
                     transactions,
-                    per[indexOfMinValue].debt,
-                    per[indexOfMinValue].id,
-                    per[indexOfMaxValue].id
+                    compensate,
+                    per[indexOfMaxValue].id,
+                    per[indexOfMinValue].id
                 );
                 // reduce debs of transaction amount
-                let compensate = Math.abs(per[indexOfMinValue].debt);
-                console.log(compensate);
-                per[indexOfMinValue].debt = Math.round(100.* (per[indexOfMinValue].debt - compensate)) / 100.;
-                per[indexOfMaxValue].debt = Math.round(100.* (per[indexOfMaxValue].debt + compensate)) / 100.;
+                per[indexOfMinValue].debt = Math.round(100.* (per[indexOfMinValue].debt + compensate)) / 100.;
+                per[indexOfMaxValue].debt = Math.round(100.* (per[indexOfMaxValue].debt - compensate)) / 100.;
                 console.log(transactions);
                 this.setState({transactions: transactions});
-                // count again what is to be done
-                toBeDone = -2;
+                // count again what is to be done (again to the nearest cent)
+                toBeDone = 0;
                 for (let i=0; i<per.length; i++) {
-                    toBeDone = toBeDone + (per[i].debt === 0 ? 0 : 1 )
+                    toBeDone = toBeDone + (Math.abs(per[i].debt) < 0.02 ? 0 : 1 )
                 }
+                attempt += 1;
                 console.log(toBeDone);
                 console.log(per);
             }
-
-        }
+        } while (toBeDone > 0 && attempt < 2*per.length);
         return true;
+    }
+
+    handleClick(action) {
+        if (action === 'delete') {
+            if (window.confirm("Confirmez-vous la fermeture du groupe ?")) {
+                fetch ('http://127.0.0.1/php/expenshare/public/sharegroup/close/' + this.state.sharegroup.slug, {
+                    method: 'PUT',
+                    headers: {'X-Requested-With': 'XMLHttpRequest'}
+                })
+                    .then(response => response.json())
+                    .then(data => this.setState({sharegroup: JSON.parse(data)}))
+                ;
+            }
+        }
     }
 
     render() {
@@ -209,6 +223,8 @@ class Balance extends Component {
                 </div>
             )
         }
+        // for balance rendering
+        // TODO : understand why state.persons is updated when per is in method balances
         const bals = this.state.persons.map( person => {
             return (
                 <div key={person.id}>
@@ -216,19 +232,19 @@ class Balance extends Component {
                 </div>
             )
         });
-
+        // for transaction suggestions
         const transacs = this.state.transactions.map( transaction => {
             return (
-                <ol key={transaction.indexT}>
-                    <li>
+                    <p key={transaction.indexT} className="alert alert-secondary" role="alert">
                         {transaction.transacAmount + ' € à payer par ' +
                         this.state.persons.find(o => o.id === transaction.fromId).firstname +
                         ' à ' +
                         this.state.persons.find(o => o.id === transaction.toId).firstname }
-                    </li>
-                </ol>
+                    </p>
             )
         });
+        // used to test if group already closed to avoid close button rendering
+        const closed = this.state.sharegroup.closed;
 
         return (
             <div>
@@ -241,17 +257,29 @@ class Balance extends Component {
                     </div>
                     <div className="col-6">
                         <div className="alert alert-primary text-right display-4" role="alert">
-                            { this.state.totalNumber > 0 && <p>{this.state.totalAmount} €</p> }
+                            <p>{this.state.totalAmount} €</p>
                         </div>
                     </div>
                 </div>
-                <h3>Équilibre des dépenses du groupe</h3>
-                <div className="mt-1">
-                    {bals}
-                </div>
-                <div className="mt-1">
-                    <h4>Opérations suggérées</h4>
-                    {transacs}
+                { this.state.totalNumber > 0 &&
+                    <div>
+                        <h3>Équilibre des dépenses du groupe</h3>
+                        <div className="mt-1">
+                            {bals}
+                        </div>
+                        <div className="mt-1">
+                            <h4>Opérations suggérées</h4>
+                            {transacs}
+                        </div>
+                    </div>
+                }
+                <div className="mt-5 text-center">
+                    {!closed &&
+                        <button type="button" className="btn btn-outline-primary"
+                                onClick={() => this.handleClick('delete')}>
+                            Fermer le groupe
+                        </button>
+                    }
                 </div>
             </div>
         );
