@@ -85,9 +85,9 @@ class Balance extends Component {
         console.log('debts:', debts);
     }
 
-    // create a balance transaction between two persons
+    // add new balance transaction between two persons
     // TODO : update database table debt
-    addTransaction(transactions, amount, fromId, toId) {
+    addTransaction = (transactions, amount, fromId, toId) => {
         transactions.push({
             indexT: transactions.length,
             transacAmount: amount,
@@ -95,12 +95,12 @@ class Balance extends Component {
             toId: toId,
         });
         return transactions;
-    }
+    };
 
     // find index of minimum value in an array of objects person
     // using this function instead of one line solution that causes unexpected results (babel?)
     //  per.reduce((iMin, p, i, per) => p.totalAmount < per[iMin].totalAmount ? i : iMin, 0);
-    indexOfMinDebt(arr) {
+    indexOfMinDebt = arr => {
         if (arr.length === 0) {
             return -1;
         }
@@ -113,12 +113,12 @@ class Balance extends Component {
             }
         }
         return minIndex;
-    }
+    };
 
     // find index of maximum value in an array of objects person
     // using this function instead of one line solution that causes unexpected results (babel?)
     //  per.reduce((iMax, p, i, per) => p.totalAmount > per[iMax].totalAmount ? i : iMax, 0);
-    indexOfMaxDebt(arr) {
+    indexOfMaxDebt = arr => {
         if (arr.length === 0) {
             return -1;
         }
@@ -131,7 +131,7 @@ class Balance extends Component {
             }
         }
         return maxIndex;
-    }
+    };
 
     // Balancing debts
     balances() {
@@ -150,7 +150,7 @@ class Balance extends Component {
             return true }
         // special case: only 2 person in group... easy
         if (toBeDone === 2) {
-            this.setState.transactions = this.addTransaction(transactions, per[0].debt, per.id[0], per.id[1]);
+            this.setState({transactions: this.addTransaction(transactions, per[0].debt, per.id[0], per.id[1])});
             per[0].debt = 0;
             per[1].debt = 0;
             return true;
@@ -164,7 +164,7 @@ class Balance extends Component {
                 for (let j=i+1; j<per.length-2; j++) {
                     if (per[i].debt !== 0 && per[j].debt !== 0) {
                         if (Math.abs(per[i].debt + per[j].debt) < 0.02) {
-                            this.setState.transactions = this.addTransaction(transactions, per[i].debt, per.id[i], per.id[j]);
+                            this.setState({transactions: this.addTransaction(transactions, per[i].debt, per.id[i], per.id[j])});
                             per[i].debt = 0;
                             per[j].debt = 0;
                             isMatch = true;
@@ -182,7 +182,8 @@ class Balance extends Component {
                 // the value of the transaction is the smallest debt
                 let compensate = Math.min(Math.abs(per[indexOfMinValue].debt), Math.abs(per[indexOfMinValue].debt));
                 console.log(compensate);
-                this.setState.transactions = this.addTransaction(
+                // add a new transaction
+                transactions = this.addTransaction(
                     transactions,
                     compensate,
                     per[indexOfMaxValue].id,
@@ -192,6 +193,7 @@ class Balance extends Component {
                 per[indexOfMinValue].debt = Math.round(100.* (per[indexOfMinValue].debt + compensate)) / 100.;
                 per[indexOfMaxValue].debt = Math.round(100.* (per[indexOfMaxValue].debt - compensate)) / 100.;
                 console.log(transactions);
+                // save transactions to state
                 this.setState({transactions: transactions});
                 // count again what is to be done (again to the nearest cent)
                 toBeDone = 0;
