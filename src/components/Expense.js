@@ -10,7 +10,6 @@ class Expense extends Component {
         this.state = {
             sharegroup: '',
             persons: [],
-            toRefresh: '',
         }
     }
 
@@ -31,6 +30,17 @@ class Expense extends Component {
             .then(response => response.json())
             .then(data => this.setState({sharegroup: JSON.parse(data)}))
         ;
+    }
+
+    // trying something to reload page after creating new expense
+    addExpense(expense) {
+        const persons = this.state.persons;
+        for (let i = 0; i < persons.length; i++) {
+            if (persons[i].id == expense.person.id) {
+                persons[i].expenses = expense;
+            }
+        }
+        this.setState({ persons: persons });
     }
 
     render() {
@@ -56,10 +66,9 @@ class Expense extends Component {
                 <Route path={this.props.match.url + "/add"}
                        render={ props => <FormExpense {...props}
                        slug={this.props.slug}
-                       callBack={() => this.setState({toRefresh: ' '})}/> }/>
+                       callBack={(expense) => this.addExpense(expense)}/> }/>
 
                 {items}
-                {this.state.toRefresh}
             </div>
         );
     }
